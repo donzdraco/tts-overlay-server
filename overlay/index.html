@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Overlay TTS TikTok + YouTube</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 1em;
+      background: transparent;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-shadow: 1px 1px 2px black;
+      font-size: 24px;
+      overflow: hidden;
+    }
+    #message {
+      animation: fadeInOut 6s ease-in-out forwards;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="message"></div>
+
+  <script>
+    const socket = new WebSocket("wss://your-server-url-here");
+    function speakText(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'id-ID';
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      speechSynthesis.speak(utterance);
+    }
+
+    function showMessage(text) {
+      const msgDiv = document.getElementById("message");
+      msgDiv.textContent = text;
+      msgDiv.style.animation = 'none';
+      msgDiv.offsetHeight;
+      msgDiv.style.animation = null;
+    }
+
+    socket.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+      const text = data.message;
+      if (text) {
+        showMessage(text);
+        speakText(text);
+      }
+    };
+  </script>
+</body>
+</html>
